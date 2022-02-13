@@ -3,7 +3,7 @@ version: '3'
 services:
     psql:
         image: postgres:12.3-alpine
-        container_name: psql
+        container_name: pq-go-graph-ql
         restart: always
         ports:
             - '5432:5432'
