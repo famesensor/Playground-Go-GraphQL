@@ -7,23 +7,36 @@ import (
 	"context"
 	"famesensor/go-graphql-jwt/graph/generated"
 	"famesensor/go-graphql-jwt/graph/model"
-	"fmt"
+	"famesensor/go-graphql-jwt/models"
+	"famesensor/go-graphql-jwt/service"
 )
 
 func (r *authOpsResolver) Login(ctx context.Context, obj *model.AuthOps, email string, password string) (interface{}, error) {
-	panic(fmt.Errorf("not implemented"))
+	token, err := service.Login(email, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
 }
 
 func (r *authOpsResolver) Register(ctx context.Context, obj *model.AuthOps, input model.RegisterUser) (interface{}, error) {
-	panic(fmt.Errorf("not implemented"))
+	if err := service.Register(input); err != nil {
+		return nil, err
+	}
+	return models.RegisterResponse{Status: "success"}, nil
 }
 
 func (r *mutationResolver) Auth(ctx context.Context) (*model.AuthOps, error) {
-	panic(fmt.Errorf("not implemented"))
+	return &model.AuthOps{}, nil
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	user, err := service.FindUserById(id)
+	if err != nil {
+		return nil, err
+	}
+	return user.ToUserGraph(), nil
 }
 
 // AuthOps returns generated.AuthOpsResolver implementation.

@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"famesensor/go-graphql-jwt/models"
 	"fmt"
 	"os"
 
@@ -34,19 +33,13 @@ func connectDatabase() {
 	if err != nil {
 		panic("Connect database failed!")
 	}
-
-	err = migrate(&models.User{})
-	if err != nil {
-		fmt.Errorf("Migrate database error : %v", err)
-		os.Exit(0)
-	}
 }
 
 func initConfig() *gorm.Config {
 	return &gorm.Config{}
 }
 
-func migrate(tables ...interface{}) error {
+func Migrate(tables ...interface{}) error {
 	return db.AutoMigrate(tables...)
 }
 

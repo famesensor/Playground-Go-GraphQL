@@ -1,8 +1,11 @@
 package main
 
 import (
+	"famesensor/go-graphql-jwt/database"
 	"famesensor/go-graphql-jwt/graph"
 	"famesensor/go-graphql-jwt/graph/generated"
+	"famesensor/go-graphql-jwt/models"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -14,9 +17,22 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	port := os.Getenv("PORT")
+	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = defaultPort
+	}
+
+	// connect database
+	DB := database.GetDB()
+	defer func() {
+		db, _ := DB.DB()
+		database.DisconnectDatabase(db)
+	}()
+
+	err := database.Migrate(&models.User{})
+	if err != nil {
+		fmt.Errorf("Migrate database error : %v", err)
+		os.Exit(0)
 	}
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
