@@ -17,3 +17,5 @@ vendor/
 data/
 
 .env
+
+/.vscode
