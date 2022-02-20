@@ -1,0 +1,35 @@
+directive @goField(
+    forceResolver: Boolean
+    name: String
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+# new directive
+directive @auth on FIELD_DEFINITION
+
+scalar Any
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+input RegisterUser {
+    name: String!
+    email: String!
+    password: String!
+}
+
+type AuthOps {
+    login(email: String!, password: String!): Any! @goField(forceResolver: true)
+    register(input: RegisterUser!): Any! @goField(forceResolver: true)
+}
+
+type Query {
+    user(id: ID!): User! @goField(forceResolver: true) @auth # add @auth for protected resource
+    me: User! @goField(forceResolver: true) @auth
+}
+
+type Mutation {
+    auth: AuthOps! @goField(forceResolver: true)
+}

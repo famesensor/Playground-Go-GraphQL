@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    psql:
+        image: postgres:12.3-alpine
+        container_name: pq-go-graph-ql
+        restart: always
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: go_graph_ql
+            TZ: 'GMT+7'
+            PGTZ: 'Asia/Bangkok'
+        volumes: 
+            - ./data/db:/var/lib/postgresql/data
