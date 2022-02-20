@@ -9,6 +9,8 @@ import (
 	"famesensor/go-graphql-jwt/utils/bcrypt"
 	"famesensor/go-graphql-jwt/utils/jwt"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 func Login(email, password string) (*models.LoginResponse, error) {
@@ -32,7 +34,9 @@ func Login(email, password string) (*models.LoginResponse, error) {
 func Register(body model.RegisterUser) error {
 	user, err := FindUserByEmail(body.Email)
 	if err != nil {
-		return err
+		if err != gorm.ErrRecordNotFound {
+			return err
+		}
 	}
 
 	if user != nil {

@@ -2,8 +2,10 @@ package main
 
 import (
 	"famesensor/go-graphql-jwt/database"
+	"famesensor/go-graphql-jwt/directives"
 	"famesensor/go-graphql-jwt/graph"
 	"famesensor/go-graphql-jwt/graph/generated"
+	"famesensor/go-graphql-jwt/middlewares"
 	"famesensor/go-graphql-jwt/models"
 	"fmt"
 	"log"
@@ -12,6 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/gorilla/mux"
 )
 
 const defaultPort = "8080"
@@ -31,15 +34,21 @@ func main() {
 
 	err := database.Migrate(&models.User{})
 	if err != nil {
-		fmt.Errorf("Migrate database error : %v", err)
+		fmt.Printf("Migrate database error : %v", err)
 		os.Exit(0)
 	}
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	router := mux.NewRouter()
+	router.Use(middlewares.AuthMiddleware)
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	c := generated.Config{Resolvers: &graph.Resolver{}}
+	c.Directives.Auth = directives.Auth
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(c))
+
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
