@@ -15,5 +15,5 @@
 ```
 
 ## Referrence
-- <a href="https://gqlgen.com/getting-started/">gqlgen</a>
-- <a href="https://medium.com/geekculture/authenticate-go-graphql-with-jwt-436c74340d">Authenticate Go-GraphQL with JWT</a>
+- <a href="https://pkg.go.dev/google.golang.org/api@v0.122.0/sheets/v4#SpreadsheetsValuesService.Get">go-sheet</a>
+- <a href="https://developers.google.com/sheets/api/guides/concepts#cell">google sheet docs</a>
